@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: hrms
+      POSTGRES_PASSWORD: hrms
+      POSTGRES_DB: hrms
+    ports: ["5432:5432"]
+    volumes: [ "pgdata:/var/lib/postgresql/data" ]
+  web:
+    build: .
+    environment:
+      DATABASE_URL: postgres://hrms:hrms@db:5432/hrms
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    depends_on: [db]
+    ports: ["3000:3000"]
+volumes:
+  pgdata:

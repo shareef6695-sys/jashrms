@@ -1,0 +1,4 @@
+import { query } from '@/lib/db'
+export async function getLatestOtPayCfg(onDate: Date){ const { rows } = await query<any>(`SELECT pay_cfg FROM overtime_rules WHERE effective_from <= $1 ORDER BY effective_from DESC LIMIT 1`, [onDate.toISOString().slice(0,10)]); return rows[0]?.pay_cfg||{basis:'basic',hour_divisor:240,regular_multiplier:1.25,weekend_multiplier:1.5,holiday_multiplier:2.0,night_multiplier:1.25} }
+export function monthlyToMinuteRate(monthly:number, divisorHours=240){ const hourly=monthly/divisorHours; return hourly/60 }
+export function computeOtAmounts(minutes:{regular:number;weekend:number;holiday:number}, minuteRate:number, cfg:any){ const reg=minutes.regular*minuteRate*(cfg.regular_multiplier||1); const wk=minutes.weekend*minuteRate*(cfg.weekend_multiplier||1); const hol=minutes.holiday*minuteRate*(cfg.holiday_multiplier||1); return { regular:reg, weekend:wk, holiday:hol, total: reg+wk+hol } }

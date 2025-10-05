@@ -1,0 +1,1 @@
+import { NextRequest } from 'next/server'; import { query } from '@/lib/db'; export async function POST(req:NextRequest){ const {employee_id,work_date}=await req.json(); await query(`UPDATE timesheets SET status='posted' WHERE employee_id=$1 AND work_date=$2`,[employee_id,work_date]); return new Response('Approved',{status:200}) }

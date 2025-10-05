@@ -1,0 +1,5 @@
+import { randomBytes, createHash } from 'crypto'
+import { query } from '@/lib/db'
+export const sha256=(s:string)=>createHash('sha256').update(s).digest('hex')
+export async function login(email:string,password:string){ const {rows}=await query<any>(`SELECT id,password_hash FROM users WHERE email=$1`,[email]); if(!rows[0]) return null; if(rows[0].password_hash!==sha256(password)) return null; const token=randomBytes(32).toString('hex'); const expires=new Date(Date.now()+1000*60*60*12); await query(`INSERT INTO sessions(token,user_id,expires_at) VALUES($1,$2,$3)`,[token,rows[0].id,expires.toISOString()]); return { token, expires } }
+export async function requireUser(token?:string){ if(!token) return null; const {rows}=await query<any>(`SELECT s.user_id,u.email,r.name as role,u.employee_id,s.expires_at FROM sessions s JOIN users u ON u.id=s.user_id JOIN roles r ON r.id=u.role_id WHERE token=$1`,[token]); if(!rows[0]) return null; if(new Date(rows[0].expires_at).getTime()<Date.now()) return null; return rows[0] }

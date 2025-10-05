@@ -1,0 +1,2 @@
+import { query } from '@/lib/db'
+export async function computeGosi(onDate: Date, status:'saudi'|'expatriate'|'none', basic:number, housing:number){ const cap=45000; const base=Math.min(cap, basic+housing); if(status==='none') return { employee:0, employer:0, base }; if(status==='saudi'){ return { employee: base*0.0975, employer: base*0.1175, base } } return { employee:0, employer: base*0.02, base } }

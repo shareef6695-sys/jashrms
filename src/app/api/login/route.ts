@@ -1,0 +1,1 @@
+import { NextRequest } from 'next/server'; import { login } from '@/lib/auth'; export async function POST(req:NextRequest){ const {email,password}=await req.json(); const s=await login(email,password); if(!s) return new Response('Invalid',{status:401}); return new Response(JSON.stringify(s),{headers:{'Content-Type':'application/json'}}) }

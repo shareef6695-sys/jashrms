@@ -1,0 +1,1 @@
+import { cookies } from 'next/headers'; import { requireUser } from '@/lib/auth'; export async function GET(){ const t=cookies().get('session_token')?.value; const me=await requireUser(t); if(!me) return new Response('Unauthorized',{status:401}); return new Response(JSON.stringify(me),{headers:{'Content-Type':'application/json'}}) }
